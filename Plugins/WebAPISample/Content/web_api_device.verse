@@ -1,4 +1,3 @@
-
 using { /Fortnite.com/Devices }
 using { /Verse.org/Simulation }
 using { /UnrealEngine.com/Temporary/Diagnostics }
@@ -16,7 +15,7 @@ web_api_device := class(creative_device):
     # Runs when the device is started in a running game
     OnBegin<override>()<suspends>:void=
         Print("Web API Device Started")
-        JsonString := "\{\"hoge\" : [\"fuga\", \"fuga2\"],\"foo\" : \{\"bar\" : \"null\"\}\}"
+        JsonString := "\{\"hoge\" : [ 1, 2, 3, 4, 5 ],\"foo\" : \{\"bar\" : null\}\}"
         
         #Client := MakeClient()
         #Response := Client.Get("https://api.example.com")
@@ -28,6 +27,7 @@ web_api_device := class(creative_device):
             Print("Serialize Start!")
             SerializedValue := SerializeValue(JsonValue)
             Print("Serialize End!")
+            Print(ToDiagnostic(SerializedValue))
             <#
             if(SerializedValue := deserialized_tuple[SerializeValue(JsonValue)]):
                 Tuple := SerializedValue(0)
