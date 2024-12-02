@@ -19,33 +19,35 @@ web_api_device := class(creative_device):
         #Response := Client.Get("https://api.example.com")
 
         if (JsonValue := Parse[JsonString]):
-            Print(DeserializeValue(JsonValue))
+            Elements := DeserializeValue(JsonValue)
+            for (Element : Elements):
+                Print(Element)
         else:
             Print("Failed to parse JSON")
 
-    DeserializeValue(Json : value) : string=
+    DeserializeValue(Json : value) : []string=
         if (String := Json.AsString[]):
-            return String
+            return array{String}
         else if (Integer := Json.AsInt[]):
-            return "{Integer}"
+            return array{ToString(Integer)}
         else if (Float := Json.AsFloat[]):
-            return "{Float}"
+            return array{ToString(Float)}
         else if (Json.AsNull[]):
-            return "null"
+            return array{"null"}
         else if (ValueArray := Json.AsArray[]):
             return DeserializeValues(ValueArray)
         else if (ValueObject := Json.AsObject[]):
             return DeserializeObjects(ValueObject)
         else:
-            return ""
+            return array{}
 
-    DeserializeValues(JsonArray : []value) : string =
+    DeserializeValues(JsonArray : []value) : []string =
         if (X := JsonArray[0], Xs := JsonArray.RemoveElement[0]):
             return DeserializeValue(X) + DeserializeValues(Xs)
         else:
-            return ""
+            return array{}
 
-    DeserializeObjects(JsonObjects : [[]char]value) : string =
+    DeserializeObjects(JsonObjects : [[]char]value) : []string =
         var Index : int = 0
         var FirstKey : string = ""
         var FirstValue : value = value{}
@@ -58,5 +60,5 @@ web_api_device := class(creative_device):
                 set NewMap = ConcatenateMaps(NewMap, map{Key => Value})
             set Index += 1
         if (Index = 1):
-            return FirstKey + DeserializeValue(FirstValue)
-        return FirstKey + DeserializeValue(FirstValue) + DeserializeObjects(NewMap)
+            return array{FirstKey} + DeserializeValue(FirstValue)
+        return array{FirstKey} + DeserializeValue(FirstValue) + DeserializeObjects(NewMap)
